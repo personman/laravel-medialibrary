@@ -32,7 +32,6 @@
     "league/flysystem": "^1.0.8",
     "maennchen/zipstream-php": "^1.0|^2.0",
     "spatie/image": "^1.4.0",
-    "spatie/pdf-to-image": "^2.0",
     "spatie/temporary-directory": "^1.1",
     "symfony/console": "^4.4|^5.1",
     "ext-json": "*"
