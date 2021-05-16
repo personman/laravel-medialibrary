@@ -134,12 +134,7 @@ trait HasMediaTrait
      */
     public function addMediaFromUrl(string $url, ...$allowedMimeTypes)
     {
-        if (! $stream = @fopen($url, 'r')) {
-            throw UnreachableUrl::create($url);
-        }
-
-        $temporaryFile = tempnam(sys_get_temp_dir(), 'media-library');
-        file_put_contents($temporaryFile, $stream);
+       $temporaryFile = $this->getImageUrlData($url);
 
         $this->guardAgainstInvalidMimeType($temporaryFile, $allowedMimeTypes);
 
@@ -160,6 +155,27 @@ trait HasMediaTrait
             ->create($this, $temporaryFile)
             ->usingName(pathinfo($filename, PATHINFO_FILENAME))
             ->usingFileName($filename);
+    }
+
+    /**
+     * Use curl instead of fopen
+     * @param $url
+     * @return false|string
+     */
+    protected function getImageUrlData($url)
+    {
+        $ch = curl_init();
+        $timeout = 55;
+        curl_setopt($ch,CURLOPT_URL,$url);
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+        curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$timeout);
+        $data = curl_exec($ch);
+        curl_close($ch);
+
+        $temporaryFile = tempnam(sys_get_temp_dir(), 'media-library');
+        file_put_contents($temporaryFile, $data);
+
+        return $temporaryFile;
     }
 
     /**
